@@ -42,18 +42,20 @@ public:
   SimpleSlider();
   ~SimpleSlider();
   
-  static SimpleSlider* create(int startValue, SSLabelFormatTypes formatType, string lowDefault, string midDefault, string highDefault, const function<void()> &sliderActivated, const function<void(int sliderValue)> &sliderChanging, const function<void(int sliderValue)> &sliderChanged);
+  static SimpleSlider* create(int startValue, string unselectedSpriteName, string selectedSpriteName, string handleSpriteName, string fontName, SSLabelFormatTypes formatType, string lowDefault, string midDefault, string highDefault, const function<void()> &sliderActivated, const function<void(int sliderValue)> &sliderChanging, const function<void(int sliderValue)> &sliderChanged);
   
   void setEnabled(bool enabled);
   
 private:
-  virtual bool init(int startValue, SSLabelFormatTypes formatType, string lowDefault, string midDefault, string highDefault, const function<void()> &sliderActivated, const function<void(int sliderValue)> &sliderChanging, const function<void(int sliderValue)> &sliderChanged);
+  virtual bool init(int startValue, string unselectedSpriteName, string selectedSpriteName, string handleSpriteName, string fontName, SSLabelFormatTypes formatType, string lowDefault, string midDefault, string highDefault, const function<void()> &sliderActivated, const function<void(int sliderValue)> &sliderChanging, const function<void(int sliderValue)> &sliderChanged);
   
   bool touchBegan(Touch* touch, Event* event);
   void touchMoved(Touch* touch, Event* event);
   void touchEnded(Touch* touch, Event* event);
   
   void setSliderPositionWith(Vec2 touchLocation);
+  
+  void updateSliderWith(Vec2 touchLocation);
   void updateBarWith(int sliderValue);
   
   int calculateNewSliderValue();
