@@ -33,6 +33,7 @@ To integrate the *SimpleSlider* class, simply:
     * A 'selected' sprite (a green rectangle), with the same dimensions as the unselected sprite (200 x 8).
     * A 'handle' sprite (a grey / silver) circle, with the 1x dimensions of 40 x 40.
 3. Add the sprites to your project. If you're not using a spritesheet, change mentions of `createWithSpriteFrameName` to instead be `create`. Also change the image filenames to match the sprites you have just added, as the ones used may not match.
+4. Change the mention of "font.ttf" to match the font you wish to use for your slider.
 4. Where you want to integrate the slider, simply create it with:
     ```cpp
     auto slider = SimpleSlider::create(defaultValue, format, zeroPercentDefault, fiftyPercentDefault, maxPercentDefault, activatedCallback, changingCallback, changedCallback);
