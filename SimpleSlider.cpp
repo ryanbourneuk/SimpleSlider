@@ -147,11 +147,15 @@ bool SimpleSlider::touchBegan(Touch* touch, Event* event) {
   
   sliderInUse = true;
   
-  sliderActivatedCallback();
+  if (sliderActivatedCallback != nullptr) {
+    sliderActivatedCallback();
+  }
   
   this->updateSliderWith(touchLocation);
   
-  sliderChangingCallback(sliderValue);
+  if (sliderChangingCallback != nullptr) {
+    sliderChangingCallback(sliderValue);
+  }
   
   return true;
 }
@@ -163,7 +167,9 @@ void SimpleSlider::touchMoved(Touch* touch, Event* event) {
   
   this->updateSliderWith(touchLocation);
   
-  sliderChangingCallback(sliderValue);
+  if (sliderChangingCallback != nullptr) {
+    sliderChangingCallback(sliderValue);
+  }
 }
 
 void SimpleSlider::touchEnded(Touch* touch, Event* event) {
@@ -173,7 +179,10 @@ void SimpleSlider::touchEnded(Touch* touch, Event* event) {
   
   this->updateSliderWith(touchLocation);
   
-  sliderChangingCallback(sliderValue);
+  if (sliderChangingCallback != nullptr) {
+    sliderChangingCallback(sliderValue);
+  }
+  
   sliderChangedCallback(sliderValue);
   
   sliderInUse = false;
