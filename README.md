@@ -42,7 +42,7 @@ To integrate the *SimpleSlider* class, simply:
     * *'unselectedSpriteName'* is the filename for the sprite that respresents the unselected slider bar.
     * *'selectedSpriteName'* is the filename for the sprite that represents the selected slider bar.
     * *'handleSpriteName'* is the filename for the sprite that represents the slider's 'handle'.
-    * *'fontName' is the filename for the font used for the slider's value label.
+    * *'fontName'* is the filename for the font used for the slider's value label.
     * *'format'* is the slider label format, either decimal or percentage: `LabelFormatDecimal` or `LabelFormatPercentage`.
     * *'zeroPercentDefault'* is the label that shows when the slider is at 0%, i.e.: "Off".
     * *'fiftyPercentDefault'* is the label that shows when the slider is at 50%, i.e.: "Default".
