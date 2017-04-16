@@ -32,14 +32,17 @@ To integrate the *SimpleSlider* class, simply:
     * An 'unselected' sprite (a greyed out rectangle), with the 1x dimensions of 200 x 8.
     * A 'selected' sprite (a green rectangle), with the same dimensions as the unselected sprite (200 x 8).
     * A 'handle' sprite (a grey / silver) circle, with the 1x dimensions of 40 x 40.
-3. Add the sprites to your project. If you're not using a spritesheet, change mentions of `createWithSpriteFrameName` to instead be `create`. Also change the image filenames to match the sprites you have just added, as the ones used may not match.
-4. Change the mention of "font.ttf" to match the font you wish to use for your slider.
+3. Add the sprites to your project. If you're not using a spritesheet, change mentions of `createWithSpriteFrameName` to instead be `create`.
 4. Where you want to integrate the slider, simply create it with:
     ```cpp
-    auto slider = SimpleSlider::create(defaultValue, format, zeroPercentDefault, fiftyPercentDefault, maxPercentDefault, activatedCallback, changingCallback, changedCallback);
+    auto slider = SimpleSlider::create(defaultValue, unselectedSpriteName, selectedSpriteName, handleSpriteName, fontName, format, zeroPercentDefault, fiftyPercentDefault, maxPercentDefault, activatedCallback, changingCallback, changedCallback);
     ```
     Where:
     * *'defaultValue'* is the starting value (in integer percent form), i.e.: 50.
+    * *'unselectedSpriteName'* is the filename for the sprite that respresents the unselected slider bar.
+    * *'selectedSpriteName'* is the filename for the sprite that represents the selected slider bar.
+    * *'handleSpriteName'* is the filename for the sprite that represents the slider's 'handle'.
+    * *'fontName' is the filename for the font used for the slider's value label.
     * *'format'* is the slider label format, either decimal or percentage: `LabelFormatDecimal` or `LabelFormatPercentage`.
     * *'zeroPercentDefault'* is the label that shows when the slider is at 0%, i.e.: "Off".
     * *'fiftyPercentDefault'* is the label that shows when the slider is at 50%, i.e.: "Default".
@@ -50,12 +53,19 @@ To integrate the *SimpleSlider* class, simply:
     
     This means a complete example of creating a *SimpleSlider* would be:
     ```cpp
-    auto slider = SimpleSlider::create(50, LabelFormatPercentage, "Off", "Default", "Max", [&]() {
-        // slider activated
+    auto slider = SimpleSlider::create(50, "slider_unselected.png", "slider_selected.png", "slider_circle.png", "font.ttf", LabelFormatPercentage, "Off", "Default", "Max", [&]() {
+      // slider activated
     }, [&](int sliderValue) {
-        // slider is moving
+      // slider is moving
     }, [&](int sliderValue) {
-        // slider has stopped moving
+      // slider has stopped moving
+    });
+    ```
+    
+    If you wish to not have the *sliderActivated* or *sliderChanging* callbacks, you can also use:
+    ```cpp
+    auto slider = SimpleSlider::create(50, "slider_unselected.png", "slider_selected.png", "slider_circle.png", "font.ttf", LabelFormatPercentage, "Off", "Default", "Max", nullptr, nullptr, [&](int sliderValue) {
+      // slider has stopped moving
     });
     ```
 3. Add the newly created slider to your target layer/node/parent as a child, set the position of the *SimpleSlider* on the parent node.
@@ -65,7 +75,7 @@ To integrate the *SimpleSlider* class, simply:
 
 * **The callbacks always receive the new slider value as an integer percent value (in the range 0% to 100%), regardless of the label format selected.**
 * Be sure to call `setEnabled()` so that the slider can only be used when you want it to be used. It shouldn't be enabled during menu transitions, and as default it is created in the disabled state. You must enable it yourself.
-* All parameters of the *SimpleSlider* `create(...)` function are required, this will change however with a future update and some parameters will be changed to be optional.
+* All parameters of the *SimpleSlider* `create(...)` function are required, apart from the *sliderActivated* and *sliderChanging* callback blocks which are optional and will function even if undefined.
 
 ## How can I ever repay you for this amazingness?!
 
