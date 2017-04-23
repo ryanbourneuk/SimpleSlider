@@ -188,6 +188,10 @@ void SimpleSlider::touchEnded(Touch* touch, Event* event) {
   sliderInUse = false;
 }
 
+void SimpleSlider::sliderShouldFinish() {
+  sliderChangedCallback(sliderValue);
+}
+
 void SimpleSlider::setSliderPositionWith(Vec2 touchLocation) {
   auto barPos = bar_unselected->getPosition();
   

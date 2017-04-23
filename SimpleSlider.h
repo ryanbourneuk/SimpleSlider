@@ -46,6 +46,8 @@ public:
   
   void setEnabled(bool enabled);
   
+  void sliderShouldFinish();
+  
 private:
   virtual bool init(int startValue, string unselectedSpriteName, string selectedSpriteName, string handleSpriteName, string fontName, SSLabelFormatTypes formatType, string lowDefault, string midDefault, string highDefault, const function<void()> &sliderActivated, const function<void(int sliderValue)> &sliderChanging, const function<void(int sliderValue)> &sliderChanged);
   

@@ -76,6 +76,7 @@ To integrate the *SimpleSlider* class, simply:
 * **The callbacks always receive the new slider value as an integer percent value (in the range 0% to 100%), regardless of the label format selected.**
 * Be sure to call `setEnabled()` so that the slider can only be used when you want it to be used. It shouldn't be enabled during menu transitions, and as default it is created in the disabled state. You must enable it yourself.
 * All parameters of the *SimpleSlider* `create(...)` function are required, apart from the *sliderActivated* and *sliderChanging* callback blocks which are optional and will function even if undefined.
+* When removing the *SimpleSlider* (such as when your settings menu is exited), if there is still a touch occurring on the slider the ‘*sliderChangedCallback*’ may not be called. Therefore, when you are looking to remove the *SimpleSlider* object you should call the `sliderShouldFinish()` function, which will call the ‘*sliderChangedCallback*’ for you.
 
 ## How can I ever repay you for this amazingness?!
 
