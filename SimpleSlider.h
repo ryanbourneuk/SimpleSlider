@@ -42,18 +42,19 @@ public:
   SimpleSlider();
   ~SimpleSlider();
   
-  static SimpleSlider* create(int startValue, string unselectedSpriteName, string selectedSpriteName, string handleSpriteName, string fontName, SSLabelFormatTypes formatType, string lowDefault, string midDefault, string highDefault, const function<void()> &sliderActivated, const function<void(int sliderValue)> &sliderChanging, const function<void(int sliderValue)> &sliderChanged);
+  static SimpleSlider *create(int startValue, string unselectedSpriteName, string selectedSpriteName, string handleSpriteName, string fontName, SSLabelFormatTypes formatType, string lowDefault, string midDefault, string highDefault, const function<void()> &sliderActivated, const function<void(int sliderValue)> &sliderChanging, const function<void(int sliderValue)> &sliderChanged);
   
   void setEnabled(bool enabled);
+  void setSliderWillChangeOnEnd(bool willChange);
   
   void sliderShouldFinish();
   
 private:
   virtual bool init(int startValue, string unselectedSpriteName, string selectedSpriteName, string handleSpriteName, string fontName, SSLabelFormatTypes formatType, string lowDefault, string midDefault, string highDefault, const function<void()> &sliderActivated, const function<void(int sliderValue)> &sliderChanging, const function<void(int sliderValue)> &sliderChanged);
   
-  bool touchBegan(Touch* touch, Event* event);
-  void touchMoved(Touch* touch, Event* event);
-  void touchEnded(Touch* touch, Event* event);
+  bool touchBegan(Touch *touch, Event *event);
+  void touchMoved(Touch *touch, Event *event);
+  void touchEnded(Touch *touch, Event *event);
   
   void setSliderPositionWith(Vec2 touchLocation);
   
@@ -63,11 +64,11 @@ private:
   int calculateNewSliderValue();
   Vec2 getPositionFor(int sliderValue);
   
-  Sprite* bar_unselected;
-  Sprite* bar_selected;
-  Sprite* handle;
+  Sprite *bar_unselected;
+  Sprite *bar_selected;
+  Sprite *handle;
   
-  Label* valueLabel;
+  Label *valueLabel;
   
   SSLabelFormatTypes labelFormatType;
   
@@ -75,6 +76,7 @@ private:
   
   bool sliderEnabled;
   bool sliderInUse;
+  bool sliderWillChangeOnEnd;
   
   string default_0;
   string default_50;

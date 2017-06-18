@@ -33,6 +33,7 @@ SimpleSlider::SimpleSlider()
 , sliderValue(0)
 , sliderEnabled(false)
 , sliderInUse(false)
+, sliderWillChangeOnEnd(false)
 , sliderActivatedCallback()
 , sliderChangingCallback()
 , sliderChangedCallback()
@@ -40,8 +41,8 @@ SimpleSlider::SimpleSlider()
 
 SimpleSlider::~SimpleSlider() { }
 
-SimpleSlider* SimpleSlider::create(int startValue, string unselectedSpriteName, string selectedSpriteName, string handleSpriteName, string fontName, SSLabelFormatTypes formatType, string lowDefault, string midDefault, string highDefault, const function<void()> &sliderActivated, const function<void(int sliderValue)> &sliderChanging, const function<void(int sliderValue)> &sliderChanged) {
-  SimpleSlider * pRet = new(nothrow) SimpleSlider();
+SimpleSlider *SimpleSlider::create(int startValue, string unselectedSpriteName, string selectedSpriteName, string handleSpriteName, string fontName, SSLabelFormatTypes formatType, string lowDefault, string midDefault, string highDefault, const function<void()> &sliderActivated, const function<void(int sliderValue)> &sliderChanging, const function<void(int sliderValue)> &sliderChanged) {
+  SimpleSlider *pRet = new(nothrow) SimpleSlider();
   
   if (pRet && pRet->init(startValue, unselectedSpriteName, selectedSpriteName, handleSpriteName, fontName, formatType, lowDefault, midDefault, highDefault, sliderActivated, sliderChanging, sliderChanged)) {
     pRet->autorelease();
@@ -69,7 +70,7 @@ bool SimpleSlider::init(int startValue, string unselectedSpriteName, string sele
   
   // Set content size of node.
   auto winSize = Director::getInstance()->getVisibleSize();
-  auto contentSize = Size(winSize.width, winSize.height*.1);
+  auto contentSize = Size(winSize.width, winSize.height * .1);
   this->setContentSize(contentSize);
   
   this->setAnchorPoint(Vec2(.5, .5));
@@ -81,12 +82,12 @@ bool SimpleSlider::init(int startValue, string unselectedSpriteName, string sele
   bar_unselected = Sprite::createWithSpriteFrameName(unselectedSpriteName);
   this->addChild(bar_unselected,0);
   bar_unselected->setAnchorPoint(Vec2(0, .5));
-  bar_unselected->setPosition(Vec2(contentSize.width*.075, contentSize.height*.5));
+  bar_unselected->setPosition(Vec2(contentSize.width * .075, contentSize.height * .5));
   
   // Create the selected bar.
   bar_selected = Sprite::createWithSpriteFrameName(selectedSpriteName);
   this->addChild(bar_selected,1);
-  bar_selected->setAnchorPoint(Vec2(0,.5));
+  bar_selected->setAnchorPoint(Vec2(0, .5));
   bar_selected->setPosition(bar_unselected->getPosition());
   
   // Create the slider handle.
@@ -97,7 +98,7 @@ bool SimpleSlider::init(int startValue, string unselectedSpriteName, string sele
   // Create the label to the right of the slider.
   valueLabel = Label::createWithTTF("0%", fontName, handle->getContentSize().height*.8);
   this->addChild(valueLabel);
-  valueLabel->setAnchorPoint(Vec2(.5,.5));
+  valueLabel->setAnchorPoint(Vec2(.5, .5));
   
   // Get the midpoint between the end of the slider bar and the edge of the screen, for the label position.
   auto barEnd = Vec2(bar_unselected->getPosition().x+bar_unselected->getContentSize().width, bar_unselected->getPosition().y);
@@ -112,15 +113,15 @@ bool SimpleSlider::init(int startValue, string unselectedSpriteName, string sele
   // Create touch listeners.
   auto touchListener = EventListenerTouchOneByOne::create();
   
-  touchListener->onTouchBegan = [&](Touch* touch, Event* event) {
+  touchListener->onTouchBegan = [&](Touch *touch, Event *event) {
     return this->touchBegan(touch, event);
   };
   
-  touchListener->onTouchMoved = [&](Touch* touch, Event* event) {
+  touchListener->onTouchMoved = [&](Touch *touch, Event *event) {
     this->touchMoved(touch, event);
   };
   
-  touchListener->onTouchEnded = [&](Touch* touch, Event* event) {
+  touchListener->onTouchEnded = [&](Touch *touch, Event *event) {
     this->touchEnded(touch, event);
   };
   
@@ -134,7 +135,7 @@ bool SimpleSlider::init(int startValue, string unselectedSpriteName, string sele
   return true;
 }
 
-bool SimpleSlider::touchBegan(Touch* touch, Event* event) {
+bool SimpleSlider::touchBegan(Touch *touch, Event *event) {
   if (!sliderEnabled || !this->getBoundingBox().containsPoint(touch->getLocation())) {
     return false;
   }
@@ -160,7 +161,7 @@ bool SimpleSlider::touchBegan(Touch* touch, Event* event) {
   return true;
 }
 
-void SimpleSlider::touchMoved(Touch* touch, Event* event) {
+void SimpleSlider::touchMoved(Touch *touch, Event *event) {
   if (!sliderEnabled || !sliderInUse) return;
   
   auto touchLocation = this->convertToNodeSpace(touch->getLocation());
@@ -172,12 +173,14 @@ void SimpleSlider::touchMoved(Touch* touch, Event* event) {
   }
 }
 
-void SimpleSlider::touchEnded(Touch* touch, Event* event) {
+void SimpleSlider::touchEnded(Touch *touch, Event *event) {
   if (!sliderEnabled || !sliderInUse) return;
   
-  auto touchLocation = this->convertToNodeSpace(touch->getLocation());
-  
-  this->updateSliderWith(touchLocation);
+  if (sliderWillChangeOnEnd) {
+    auto touchLocation = this->convertToNodeSpace(touch->getLocation());
+    
+    this->updateSliderWith(touchLocation);
+  }
   
   if (sliderChangingCallback != nullptr) {
     sliderChangingCallback(sliderValue);
@@ -195,7 +198,7 @@ void SimpleSlider::sliderShouldFinish() {
 void SimpleSlider::setSliderPositionWith(Vec2 touchLocation) {
   auto barPos = bar_unselected->getPosition();
   
-  handle->setPosition(Vec2(clampf(touchLocation.x, barPos.x, barPos.x+bar_unselected->getContentSize().width), barPos.y));
+  handle->setPosition(Vec2(clampf(touchLocation.x , barPos.x, barPos.x + bar_unselected->getContentSize().width), barPos.y));
 }
 
 void SimpleSlider::updateSliderWith(Vec2 touchLocation) {
@@ -207,7 +210,7 @@ void SimpleSlider::updateSliderWith(Vec2 touchLocation) {
 }
 
 void SimpleSlider::updateBarWith(int sliderValue) {
-  bar_selected->setScaleX((float)sliderValue/100);
+  bar_selected->setScaleX((float)sliderValue / 100);
   
   if (sliderValue == 0 && !default_0.empty()) {
     valueLabel->setString(default_0);
@@ -229,15 +232,19 @@ void SimpleSlider::updateBarWith(int sliderValue) {
 }
 
 int SimpleSlider::calculateNewSliderValue() {
-  return (int)clampf(((handle->getPosition().x-bar_unselected->getPosition().x)/bar_unselected->getContentSize().width) * 100, 0, 100);
+  return (int)clampf(((handle->getPosition().x - bar_unselected->getPosition().x) / bar_unselected->getContentSize().width) * 100, 0, 100);
 }
 
 Vec2 SimpleSlider::getPositionFor(int sliderValue) {
   auto barPos = bar_unselected->getPosition();
   
-  return Vec2(barPos.x+(bar_unselected->getContentSize().width*((float)sliderValue/100)), barPos.y);
+  return Vec2(barPos.x+(bar_unselected->getContentSize().width * ((float)sliderValue / 100)), barPos.y);
 }
 
 void SimpleSlider::setEnabled(bool enabled) {
   sliderEnabled = enabled;
+}
+
+void SimpleSlider::setSliderWillChangeOnEnd(bool willChange) {
+  sliderWillChangeOnEnd = willChange;
 }
